@@ -69,15 +69,6 @@ function App() {
     const [neutral, setNeutral] = useState(0);
     const [bad, setBad] = useState(0);
 
-    /* const [stats, setStats] = useState({
-        good: 0,
-        neutral: 0,
-        bad: 0,
-        all: 0,
-        average: 0,
-        positive: 0
-    }) */
-
     function addReview(setReview, review) {
         setReview(review + 1);
     }
