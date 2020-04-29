@@ -1,97 +1,60 @@
 import React, { useState } from 'react';
 import './App.css';
 
-function Statistics({ good, neutral, bad }) {
-    if (good === 0 && neutral === 0 && bad === 0) {
-        return <p>No feedback given</p>;
+function App() {
+    const anecdotes = [
+        'If it hurts, do it more often',
+        'Adding manpower to a late software project makes it later!',
+        'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+        'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+        'Premature optimization is the root of all evil.',
+        'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
+    ];
+
+    const [selected, setSelected] = useState(0);
+    const [votes, setVotes] = useState(Array(anecdotes.length).fill(0));
+
+    function random() {
+        const number = Math.round(Math.random() * 5);
+        setSelected(number);
     }
 
-    const all = good + neutral + bad;
-    return (
-        <div>
-            <h1>statistics</h1>
-            <table>
-                <tbody>
-                    <tr>
-                        <td>
-                            <Statistic text="good" stat={good} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <Statistic text="neutral" stat={neutral} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <Statistic text="bad" stat={bad} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <Statistic text="all" stat={all} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <Statistic text="average" stat={(all / 3).toFixed(1)} />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <Statistic
-                                text="positive"
-                                stat={((good / all) * 100).toFixed(1)}
-                                percent={'%'}
-                            />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    );
-}
-
-function Statistic({ text, stat, percent }) {
-    return (
-        <p>
-            {text} {stat} {percent}
-        </p>
-    );
-}
-
-function Button({ text, clickEvent }) {
-    return <button onClick={clickEvent}>{text}</button>;
-}
-
-function App() {
-    const [good, setGood] = useState(0);
-    const [neutral, setNeutral] = useState(0);
-    const [bad, setBad] = useState(0);
-
-    /* const [stats, setStats] = useState({
-        good: 0,
-        neutral: 0,
-        bad: 0,
-        all: 0,
-        average: 0,
-        positive: 0
-    }) */
-
-    function addReview(setReview, review) {
-        setReview(review + 1);
+    function vote() {
+        const copyVotes = [...votes];
+        copyVotes[selected] += 1;
+        setVotes([...copyVotes]);
     }
 
     return (
         <>
             <div>
-                <h1>give feedback</h1>
-                <Button text={'good'} clickEvent={() => addReview(setGood, good)} />
-                <Button text={'neutral'} clickEvent={() => addReview(setNeutral, neutral)} />
-                <Button text={'bad'} clickEvent={() => addReview(setBad, bad)} />
+                <h1>anecdotes</h1>
+                <p>{anecdotes[selected]}</p>
+                <p>has {votes[selected]} votes</p>
             </div>
-            <Statistics good={good} neutral={neutral} bad={bad} />
+            <button onClick={vote}>vote</button>
+            <button onClick={random}>random anecdote</button>
+            <MostVoted votes={votes} anecdotes={anecdotes} />
         </>
+    );
+}
+
+function MostVoted({ votes, anecdotes }) {
+    const highestVote = votes.indexOf(Math.max(...votes));
+    if (highestVote === 0) {
+        return (
+            <div>
+                <h1>Most voted anecdote</h1>
+                <p>no anecdote has votes yet</p>
+            </div>
+        );
+    }
+    return (
+        <div>
+            <h1>Most voted anecdote</h1>
+            <p>{anecdotes[highestVote]}</p>
+            <p>has {Math.max(...votes)}</p>
+        </div>
     );
 }
 
