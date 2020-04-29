@@ -1,64 +1,97 @@
 import React, { useState } from 'react';
 import './App.css';
 
-function Header(props) {
-    return <h1>{props.course.name}</h1>;
-}
+function Statistics({ good, neutral, bad }) {
+    if (good === 0 && neutral === 0 && bad === 0) {
+        return <p>No feedback given</p>;
+    }
 
-function Content(props) {
+    const all = good + neutral + bad;
     return (
-        <>
-            {props.course.parts.map((part) => (
-                <Part part={part.name} exercises={part.exercises} />
-            ))}
-        </>
+        <div>
+            <h1>statistics</h1>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <Statistic text="good" stat={good} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <Statistic text="neutral" stat={neutral} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <Statistic text="bad" stat={bad} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <Statistic text="all" stat={all} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <Statistic text="average" stat={(all / 3).toFixed(1)} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <Statistic
+                                text="positive"
+                                stat={((good / all) * 100).toFixed(1)}
+                                percent={'%'}
+                            />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     );
 }
 
-function Part(props) {
+function Statistic({ text, stat, percent }) {
     return (
         <p>
-            {props.part} {props.exercises}
+            {text} {stat} {percent}
         </p>
     );
 }
 
-function Total(props) {
-    return (
-        <p>
-            Number of exercises{' '}
-            {props.course.parts.reduce((acc, curr) => {
-                return (acc += curr.exercises);
-            }, 0)}
-        </p>
-    );
+function Button({ text, clickEvent }) {
+    return <button onClick={clickEvent}>{text}</button>;
 }
 
 function App() {
-    const course = {
-        name: 'half stack application development',
-        parts: [
-            {
-                name: 'Fundamentals of React',
-                exercises: 10,
-            },
-            {
-                name: 'Using props to pass data',
-                exercises: 7,
-            },
-            {
-                name: 'State of a component',
-                exercises: 14,
-            },
-        ],
-    };
+    const [good, setGood] = useState(0);
+    const [neutral, setNeutral] = useState(0);
+    const [bad, setBad] = useState(0);
+
+    /* const [stats, setStats] = useState({
+        good: 0,
+        neutral: 0,
+        bad: 0,
+        all: 0,
+        average: 0,
+        positive: 0
+    }) */
+
+    function addReview(setReview, review) {
+        setReview(review + 1);
+    }
 
     return (
-        <div>
-            <Header course={course} />
-            <Content course={course} />
-            <Total course={course} />
-        </div>
+        <>
+            <div>
+                <h1>give feedback</h1>
+                <Button text={'good'} clickEvent={() => addReview(setGood, good)} />
+                <Button text={'neutral'} clickEvent={() => addReview(setNeutral, neutral)} />
+                <Button text={'bad'} clickEvent={() => addReview(setBad, bad)} />
+            </div>
+            <Statistics good={good} neutral={neutral} bad={bad} />
+        </>
     );
 }
 
